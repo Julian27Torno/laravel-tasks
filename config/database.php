@@ -45,7 +45,7 @@ return [
 
         'mysql' => [
     'driver' => 'mysql',
-    'host' => env('AZURE_MYSQL_HOST', '127.0.0.1'),
+    'host' => env('AZURE_MYSQL_HOST', 'localhost'),
     'port' => env('AZURE_MYSQL_PORT', '3306'),
     'database' => env('AZURE_MYSQL_DBNAME', 'forge'),
     'username' => env('AZURE_MYSQL_USERNAME', 'forge'),
