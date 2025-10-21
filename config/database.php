@@ -58,6 +58,7 @@ return [
     'strict' => true,
     'engine' => null,
 
+    
     // TLS for MySQL — App Service ↔ Azure MySQL requires secure transport.
     // You do NOT need 'sslmode' here (that’s Postgres-only).
     'options' => extension_loaded('pdo_mysql') ? array_filter([
