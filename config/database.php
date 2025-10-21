@@ -44,24 +44,27 @@ return [
         ],
 
         'mysql' => [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
+    'driver' => 'mysql',
+    'host' => env('AZURE_MYSQL_HOST', 'localhost'),
+    'port' => env('AZURE_MYSQL_PORT', '3306'),
+    'database' => env('AZURE_MYSQL_DBNAME', 'forge'),
+    'username' => env('AZURE_MYSQL_USERNAME', 'forge'),
+    'password' => env('AZURE_MYSQL_PASSWORD', ''),
+    'unix_socket' => env('DB_SOCKET', ''), // keep empty for Azure; DO NOT point to a socket
+    'charset' => 'utf8mb4',
+    'collation' => 'utf8mb4_unicode_ci',
+    'prefix' => '',
+    'prefix_indexes' => true,
+    'strict' => true,
+    'engine' => null,
+
+    // TLS for MySQL — App Service ↔ Azure MySQL requires secure transport.
+    // You do NOT need 'sslmode' here (that’s Postgres-only).
+    'options' => extension_loaded('pdo_mysql') ? array_filter([
+        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, 
+    ]) : [],
+],
+
 
         'pgsql' => [
             'driver' => 'pgsql',
@@ -119,33 +122,31 @@ return [
     |
     */
 
-    'redis' => [
+   'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+    'client' => env('REDIS_CLIENT', 'phpredis'),
 
-        'options' => [
-            'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
-        ],
-
-        'default' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
-        ],
-
-        'cache' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
-        ],
-
+    'options' => [
+        'cluster' => env('REDIS_CLUSTER', 'redis'),
+        'prefix'  => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
     ],
+
+    'default' => [
+        'host'     => env('AZURE_REDIS_HOST', '127.0.0.1'),
+        'password' => env('AZURE_REDIS_PASSWORD', null),
+        'port'     => env('AZURE_REDIS_PORT', 6379),
+        'database' => env('AZURE_REDIS_DATABASE', 0),
+        'scheme'   => 'tls',     // <-- REQUIRED for Azure Redis on 6380
+    ],
+
+    'cache' => [
+        'host'     => env('AZURE_REDIS_HOST', '127.0.0.1'),
+        'password' => env('AZURE_REDIS_PASSWORD', null),
+        'port'     => env('AZURE_REDIS_PORT', 6379),
+        'database' => env('AZURE_REDIS_DATABASE', 1),
+        'scheme'   => 'tls',     // <-- REQUIRED
+    ],
+],
+
 
 ];
